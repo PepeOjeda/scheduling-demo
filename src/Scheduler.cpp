@@ -60,21 +60,6 @@ void Scheduler::AddTask(const std::string& name, int priority, double duration)
     tasks.push_back(task);
     queuedTaskIds.push_back(task.id);
 }
-void Scheduler::ChooseNextTask()
-{
-    // choose which task gets to run
-    SortTasks();
-
-    // if the first task in the sorted queue is different from the one that was already running
-    if (runningTaskId != queuedTaskIds.front())
-    {
-        // PREEMPTION!
-        runningTaskId = queuedTaskIds.front();
-        Task& task = tasks[runningTaskId - 1];
-        task.status = TaskStatus::Running;
-        executions.push_back({task.id, currentTime, currentTime});
-    }
-}
 
 void Scheduler::StepSimulation()
 {
@@ -93,7 +78,7 @@ void Scheduler::StepSimulation()
     Task& task = tasks[runningTaskId - 1];
     task.remainingDuration -= deltaMs;
     task.lastExecutionTime = currentTime;
-    
+
     // Update the execution history (for GUI)
     executions.back().end = currentTime;
 
@@ -103,6 +88,22 @@ void Scheduler::StepSimulation()
         task.remainingDuration = 0.0;
         task.status = TaskStatus::Completed;
         queuedTaskIds.erase(queuedTaskIds.begin());
+    }
+}
+
+void Scheduler::ChooseNextTask()
+{
+    // choose which task gets to run
+    SortTasks();
+
+    // if the first task in the sorted queue is different from the one that was already running
+    if (runningTaskId != queuedTaskIds.front())
+    {
+        // PREEMPTION!
+        runningTaskId = queuedTaskIds.front();
+        Task& task = tasks[runningTaskId - 1];
+        task.status = TaskStatus::Running;
+        executions.push_back({task.id, currentTime, currentTime});
     }
 }
 
