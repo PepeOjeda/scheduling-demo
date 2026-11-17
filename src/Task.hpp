@@ -16,7 +16,6 @@ struct Task
     int priority = 0;
 
     double timeAdded = 0.0;
-    double duration = 0.0;
     double remainingDuration = 0.0;
     double lastExecutionTime = 0.0;
 

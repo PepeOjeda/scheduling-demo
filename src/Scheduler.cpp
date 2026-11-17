@@ -55,7 +55,6 @@ void Scheduler::AddTask(const std::string& name, int priority, double duration)
     task.name = name;
     task.timeAdded = currentTime;
     task.priority = priority;
-    task.duration = duration;
     task.remainingDuration = duration;
     task.lastExecutionTime = currentTime;
     tasks.push_back(task);
@@ -94,6 +93,8 @@ void Scheduler::StepSimulation()
     Task& task = tasks[runningTaskId - 1];
     task.remainingDuration -= deltaMs;
     task.lastExecutionTime = currentTime;
+    
+    // Update the execution history (for GUI)
     executions.back().end = currentTime;
 
     // if the task is done, remove it from the queue
